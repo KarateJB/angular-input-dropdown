@@ -18,6 +18,8 @@
   position: absolute;
   width: 100%;
   z-index: 1000;
+  overflow-y:scroll; /* Scroll bar */
+  max-height: 200px; /* Scroll bar */
 }
 
 .input-dropdown ul > li {

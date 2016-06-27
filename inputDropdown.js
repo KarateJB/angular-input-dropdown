@@ -1,31 +1,33 @@
-angular.module('inputDropdown', []).directive('inputDropdown', [function() {
+angular.module('inputDropdown', []).directive('inputDropdown', [function () {
   var templateString =
-  '<div class="input-dropdown">' +
-    '<input type="text"' +
-           'name="{{inputName}}"' +
-           'placeholder="{{inputPlaceholder}}"' +
-           'ng-model="inputValue"' +
-           'ng-required="inputRequired"' +
-           'ng-change="inputChange()"' +
-           'ng-focus="inputFocus()"' +
-           'ng-blur="inputBlur($event)"' +
-           'input-dropdown-validator>' +
-     '<ul ng-show="dropdownVisible">' +
+      '<div class="input-dropdown">' +
+      '<input type="text"' +
+      'name="{{inputName}}"' +
+      'placeholder="{{inputPlaceholder}}"' +
+      'ng-model="inputValue"' +
+      'value="{{inputValue}}"' +
+      'ng-required="inputRequired"' +
+      'ng-change="inputChange()"' +
+      'ng-focus="inputFocus()"' +
+      'ng-blur="inputBlur($event)"' +
+      'input-dropdown-validator>' +
+      '<ul ng-show="dropdownVisible">' +
       '<li ng-repeat="item in dropdownItems"' +
-          'ng-click="selectItem(item)"' +
-          'ng-mouseenter="setActive($index)"' +
-          'ng-mousedown="dropdownPressed()"' +
-          'ng-class="{\'active\': activeItemIndex === $index}"' +
-          '>' +
-        '<span ng-if="item.readableName">{{item.readableName}}</span>' +
-        '<span ng-if="!item.readableName">{{item}}</span>' +
+      'ng-click="selectItem(item)"' +
+      'ng-mouseenter="setActive($index)"' +
+      'ng-mousedown="dropdownPressed()"' +
+      'ng-class="{\'active\': activeItemIndex === $index}"' +
+      '>' +
+      '<span ng-if="item.readableName">{{item.readableName}}</span>' +
+      '<span ng-if="!item.readableName">{{item}}</span>' +
       '</li>' +
-    '</ul>' +
-  '</div>';
+      '</ul>' +
+      '</div>';
 
   return {
     restrict: 'E',
     scope: {
+      inputValue: "=ngModel",
       defaultDropdownItems: '=',
       selectedItem: '=',
       inputRequired: '=',
@@ -35,15 +37,15 @@ angular.module('inputDropdown', []).directive('inputDropdown', [function() {
       itemSelectedMethod: '&'
     },
     template: templateString,
-    controller: function($scope) {
-      this.getSelectedItem = function() {
+    controller: function ($scope) {
+      this.getSelectedItem = function () {
         return $scope.selectedItem;
       };
-      this.isRequired = function() {
+      this.isRequired = function () {
         return $scope.inputRequired;
       };
     },
-    link: function(scope, element) {
+    link: function (scope, element) {
       var pressedDropdown = false;
       var inputScope = element.find('input').isolateScope();
 
@@ -52,14 +54,14 @@ angular.module('inputDropdown', []).directive('inputDropdown', [function() {
       scope.dropdownVisible = false;
       scope.dropdownItems = scope.defaultDropdownItems || [];
 
-      scope.$watch('dropdownItems', function(newValue, oldValue) {
+      scope.$watch('dropdownItems', function (newValue, oldValue) {
         if (!angular.equals(newValue, oldValue)) {
           // If new dropdownItems were retrieved, reset active item
           scope.setActive(0);
         }
       });
 
-      scope.$watch('selectedItem', function(newValue, oldValue) {
+      scope.$watch('selectedItem', function (newValue, oldValue) {
         inputScope.updateInputValidity();
 
         if (!angular.equals(newValue, oldValue)) {
@@ -79,11 +81,11 @@ angular.module('inputDropdown', []).directive('inputDropdown', [function() {
         }
       });
 
-      scope.setActive = function(itemIndex) {
+      scope.setActive = function (itemIndex) {
         scope.activeItemIndex = itemIndex;
       };
 
-      scope.inputChange = function() {
+      scope.inputChange = function () {
         scope.selectedItem = null;
         showDropdown();
 
@@ -93,21 +95,21 @@ angular.module('inputDropdown', []).directive('inputDropdown', [function() {
         }
 
         if (scope.filterListMethod) {
-          var promise = scope.filterListMethod({userInput: scope.inputValue});
+          var promise = scope.filterListMethod({ userInput: scope.inputValue });
           if (promise) {
-            promise.then(function(dropdownItems) {
+            promise.then(function (dropdownItems) {
               scope.dropdownItems = dropdownItems;
             });
           }
         }
       };
 
-      scope.inputFocus = function() {
+      scope.inputFocus = function () {
         scope.setActive(0);
         showDropdown();
       };
 
-      scope.inputBlur = function(event) {
+      scope.inputBlur = function (event) {
         if (pressedDropdown) {
           // Blur event is triggered before click event, which means a click on a dropdown item wont be triggered if we hide the dropdown list here.
           pressedDropdown = false;
@@ -116,42 +118,42 @@ angular.module('inputDropdown', []).directive('inputDropdown', [function() {
         hideDropdown();
       };
 
-      scope.dropdownPressed = function() {
+      scope.dropdownPressed = function () {
         pressedDropdown = true;
       }
 
-      scope.selectItem = function(item) {
+      scope.selectItem = function (item) {
         scope.selectedItem = item;
         hideDropdown();
         scope.dropdownItems = [item];
 
         if (scope.itemSelectedMethod) {
-          scope.itemSelectedMethod({item: item});
+          scope.itemSelectedMethod({ item: item });
         }
       };
 
       var showDropdown = function () {
         scope.dropdownVisible = true;
       };
-      var hideDropdown = function() {
+      var hideDropdown = function () {
         scope.dropdownVisible = false;
       }
 
-      var selectPreviousItem = function() {
+      var selectPreviousItem = function () {
         var prevIndex = scope.activeItemIndex - 1;
         if (prevIndex >= 0) {
           scope.setActive(prevIndex);
         }
       };
 
-      var selectNextItem = function() {
+      var selectNextItem = function () {
         var nextIndex = scope.activeItemIndex + 1;
         if (nextIndex < scope.dropdownItems.length) {
           scope.setActive(nextIndex);
         }
       };
 
-      var selectActiveItem = function()  {
+      var selectActiveItem = function () {
         if (scope.activeItemIndex >= 0 && scope.activeItemIndex < scope.dropdownItems.length) {
           scope.selectItem(scope.dropdownItems[scope.activeItemIndex]);
         }
@@ -178,17 +180,17 @@ angular.module('inputDropdown', []).directive('inputDropdown', [function() {
   }
 }]);
 
-angular.module('inputDropdown').directive('inputDropdownValidator', function() {
+angular.module('inputDropdown').directive('inputDropdownValidator', function () {
   return {
     require: ['^inputDropdown', 'ngModel'],
     restrict: 'A',
     scope: {},
-    link: function(scope, element, attrs, ctrls) {
+    link: function (scope, element, attrs, ctrls) {
       var inputDropdownCtrl = ctrls[0];
       var ngModelCtrl = ctrls[1];
       var validatorName = 'itemSelectedValid';
 
-      scope.updateInputValidity = function() {
+      scope.updateInputValidity = function () {
         var selection = inputDropdownCtrl.getSelectedItem();
         if (selection || !inputDropdownCtrl.isRequired()) {
           ngModelCtrl.$setValidity(validatorName, true);
