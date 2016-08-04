@@ -2,6 +2,7 @@ angular.module('inputDropdown', []).directive('inputDropdown', [function () {
     var templateString =
         '<div class="input-dropdown">' +
         '<input type="text"' +
+        'id="{{inputName}}"' +
         'name="{{inputName}}"' +
         'placeholder="{{inputPlaceholder}}"' +
         'ng-model="inputValue"' +
