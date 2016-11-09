@@ -53,7 +53,6 @@ angular.module('inputDropdown', []).directive('inputDropdown', [function () {
             var inputScope = element.find('input').isolateScope();
 
             scope.activeItemIndex = 0;
-            scope.inputValue = '';
             scope.dropdownVisible = false;
             scope.dropdownItems = scope.defaultDropdownItems || [];
 
@@ -78,7 +77,9 @@ angular.module('inputDropdown', []).directive('inputDropdown', [function () {
                             scope.inputValue = newValue;
                         }
                         else {
-                            scope.inputValue = newValue.readableName;
+                             if (newValue.readableName) {
+                                scope.inputValue = newValue.readableName;
+                            }
                         }
                     }
                     else {
